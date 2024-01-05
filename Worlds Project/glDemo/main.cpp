@@ -96,7 +96,7 @@ int main()
 
 	npcMesh = new AIMesh(string("Assets\\NPC\\npc.obj"));//imports NPC model mesh
 	if (npcMesh) {
-		npcMesh->addTexture(string("Assets\\Textures\\blue.bmp\\"), FIF_BMP);//imports texture of npcMesh if npcMesh is imported
+		npcMesh->addTexture(string("Assets\\Textures\\BuildingPhase1.bmp\\"), FIF_BMP);//imports texture of npcMesh if npcMesh is imported
 	}
 
 	groundFlatMesh = new AIMesh(string("Assets\\Ground\\MarsGroundFlat.obj"));//imports MarsGroundFlat mesh
@@ -104,9 +104,9 @@ int main()
 		groundFlatMesh->addTexture(string("Assets\\Textures\\MarsGroundTexture.jpg"), FIF_JPEG);//imports texture if MarsGroundFlat mesh is imported
 	}
 
-	buildingPhase2Mesh = new AIMesh(string("Assets\\Building\\BuildingPhase2.obj"));//imports MarsGroundFlat mesh
+	buildingPhase2Mesh = new AIMesh(string("Assets\\Building\\BuildingPhase1.obj"));//imports MarsGroundFlat mesh
 	if (buildingPhase2Mesh) {
-		buildingPhase2Mesh->addTexture(string("Assets\\Textures\\blue.bmp"), FIF_BMP);//imports texture if MarsGroundFlat mesh is imported
+		buildingPhase2Mesh->addTexture(string("Assets\\Textures\\BuildingPhase1.bmp"), FIF_BMP);//imports texture if MarsGroundFlat mesh is imported
 	}
 
 

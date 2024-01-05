@@ -51,12 +51,6 @@
     <ClInclude Include="AIMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="2DExamples.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GUClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
