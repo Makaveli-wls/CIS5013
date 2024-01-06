@@ -13,13 +13,7 @@ void ArcballCamera::calculateDerivedValues() {
 
 	const float theta_ = glm::radians<float>(theta);
 	const float phi_ = glm::radians<float>(phi);
-
-	// calculate position vector
-	//cameraPos = glm::vec4(sinf(phi_) * cosf(-theta_) * radius, sinf(-theta_) * radius, cosf(phi_) * cosf(-theta_) * radius, 1.0f);
-
-	// calculate orientation basis R
-	//R = glm::eulerAngleY(phi_) * glm::eulerAngleX(theta_);
-		
+	
 	// calculate view and projection transform matrices
 	viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -radius)) * glm::eulerAngleX(-theta_) * glm::eulerAngleY(-phi_);
 	projectionMatrix = glm::perspective(glm::radians<float>(fovY), aspect, nearPlane, farPlane);
@@ -43,11 +37,9 @@ ArcballCamera::ArcballCamera() {
 	nearPlane = 0.1f;
 	farPlane = 500.0f;
 
-	//F = ViewFrustum(55.0f, 1.0f, 0.1f, 500.0f);
-
 	// calculate derived values
 	calculateDerivedValues();
-	//F.calculateWorldCoordPlanes(C, R);
+	
 }
 
 
@@ -63,11 +55,9 @@ ArcballCamera::ArcballCamera(float theta, float phi, float radius, float fovY, f
 	this->nearPlane = nearPlane;
 	this->farPlane = farPlane;
 
-	//F = ViewFrustum(init_fovy, init_aspect, init_nearPlane, init_farPlane);
-
 	// calculate derived values
 	calculateDerivedValues();
-	//F.calculateWorldCoordPlanes(C, R);
+	
 }
 
 
@@ -158,19 +148,6 @@ void ArcballCamera::setFarPlaneDistance(float farPlaneDistance) {
 
 
 #pragma region Accessor methods for derived values
-
-// return the camera location in world coordinate space
-//glm::vec4 ArcballCamera::getPosition() {
-//
-//	return cameraPos;
-//}
-
-// return a const reference to the camera's orientation matrix in world coordinate space
-//glm::mat4 ArcballCamera::getOrientationBasis() {
-//
-//	return R;
-//}
-
 // return a const reference to the view transform matrix for the camera
 glm::mat4 ArcballCamera::viewTransform() {
 

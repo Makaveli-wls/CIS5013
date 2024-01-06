@@ -8,25 +8,13 @@ class ArcballCamera {
 
 private:
 
-	float				theta, phi; // spherical coordinates theta (rotation around the x axis) and phi (rotation around the y axis).  <theta, phi> are stored in degrees.  Zero degree rotation on <theta, phi> places the camera on the +z axis.  A positive phi represents counter-clockwise rotation around the y axis in a right-hand coordinate system.  A positive theta represents a counter-clockwise rotation around the x axis in a right-handed coordinate system
+	
 	float				radius; // radius of the camera's spherical coordinate model.  This lies in the interval [0, +inf]
 
 	// Projection / frustum values
 	float				fovY, aspect, nearPlane, farPlane;
 
 	// derived values
-
-	// camera position
-	//glm::vec4			cameraPos;
-
-	// camera orientation basis(matrix) derived from <theta, phi>
-	//glm::mat4			R;
-
-	// view transform matrix for camera's current position and orientation - maps from world to eye coordinate space
-	glm::mat4			viewMatrix;
-
-	// projection transform matrix
-	glm::mat4			projectionMatrix;
 
 
 	//
@@ -85,12 +73,14 @@ public:
 	
 	// Accessor methods for derived values
 
-	//glm::vec4 getPosition(); // return the camera location in world coordinate space.  The radius of the camera's position in spherical coordinates is the l2 norm of the returned position vector
-
-	//glm::mat4 getOrientationBasis(); // return a const reference to the camera's orientation matrix in world coordinate space
+	float				theta, phi; // spherical coordinates theta (rotation around the x axis) and phi (rotation around the y axis).  <theta, phi> are stored in degrees.  Zero degree rotation on <theta, phi> places the camera on the +z axis.  A positive phi represents counter-clockwise rotation around the y axis in a right-hand coordinate system.  A positive theta represents a counter-clockwise rotation around the x axis in a right-handed coordinate system
 
 	glm::mat4 viewTransform(); // return a const reference to the view transform matrix for the camera
 
 	glm::mat4 projectionTransform(); // return a const reference the projection transform for the camera.  This is a pass-through method and calls projectionMatrix on the encapsulated ViewFrustum
 
+	// view transform matrix for camera's current position and orientation - maps from world to eye coordinate space
+	glm::mat4			viewMatrix;
+	// projection transform matrix
+	glm::mat4			projectionMatrix;
 };

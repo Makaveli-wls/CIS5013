@@ -24,6 +24,7 @@ CGPrincipleAxes* principleAxes = nullptr;
 AIMesh* npcMesh = nullptr;
 AIMesh* groundFlatMesh = nullptr;
 AIMesh* buildingPhase2Mesh = nullptr;
+AIMesh* buildingPhase1Mesh = nullptr;
 
 //Window height and width
 const unsigned int initWidth = 512;
@@ -36,6 +37,17 @@ void renderScene();
 void updateScene();
 void resizeWindow(GLFWwindow* window, int width, int height);
 void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int mods);
+void zoomIn(GLFWwindow* window);
+void zoomOut(GLFWwindow* window);
+void downLayer(GLFWwindow* window);
+void upLayer(GLFWwindow* window);
+void rotateLeft(GLFWwindow* window);
+void rotateRight(GLFWwindow* window);
+
+bool downLayerEnabled = false;
+float rotationsLeft = 0.0f;
+float rotationsRight = 0.0f;
+
 
 
 int main() 
@@ -104,9 +116,14 @@ int main()
 		groundFlatMesh->addTexture(string("Assets\\Textures\\MarsGroundTexture.jpg"), FIF_JPEG);//imports texture if MarsGroundFlat mesh is imported
 	}
 
-	buildingPhase2Mesh = new AIMesh(string("Assets\\Building\\BuildingPhase1.obj"));//imports MarsGroundFlat mesh
+	buildingPhase1Mesh = new AIMesh(string("Assets\\Building\\BuildingPhase1.obj"));//imports MarsGroundFlat mesh
+	if (buildingPhase1Mesh) {
+		buildingPhase1Mesh->addTexture(string("Assets\\Textures\\BuildingPhase1.bmp"), FIF_BMP);//imports texture if MarsGroundFlat mesh is imported
+	}
+
+	buildingPhase2Mesh = new AIMesh(string("Assets\\Building\\BuildingPhase2.obj"));//imports MarsGroundFlat mesh
 	if (buildingPhase2Mesh) {
-		buildingPhase2Mesh->addTexture(string("Assets\\Textures\\BuildingPhase1.bmp"), FIF_BMP);//imports texture if MarsGroundFlat mesh is imported
+		buildingPhase2Mesh->addTexture(string("Assets\\Textures\\BuildingPhase2.bmp"), FIF_BMP);//imports texture if MarsGroundFlat mesh is imported
 	}
 
 
@@ -203,10 +220,23 @@ void renderScene()
 
 	}
 
+	if (buildingPhase1Mesh)
+	{
+
+		mat4 groundFlatTranslate = translate(identity<mat4>(), vec3(40.0f, 20.0f, -15.0f));
+		mat4 T = cameraTransform * groundFlatTranslate;
+		glLoadMatrixf((GLfloat*)&T);
+
+		buildingPhase1Mesh->preRender();
+		buildingPhase1Mesh->render();
+		buildingPhase1Mesh->postRender();
+
+	}
+
 	if (buildingPhase2Mesh)
 	{
 
-		mat4 groundFlatTranslate = translate(identity<mat4>(), vec3(0.0f, 10.0f, 0.0f));
+		mat4 groundFlatTranslate = translate(identity<mat4>(), vec3(100.0f, 10.0f, -50.0f));
 		mat4 T = cameraTransform * groundFlatTranslate;
 		glLoadMatrixf((GLfloat*)&T);
 
@@ -260,6 +290,27 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 			case GLFW_KEY_ESCAPE:
 				glfwSetWindowShouldClose(window, true);
 				break;
+
+			case GLFW_KEY_W:
+				zoomIn(window);
+				break;
+
+			case GLFW_KEY_S:
+				zoomOut(window);
+				break;
+
+			case GLFW_KEY_Q:
+				downLayer(window);
+				break;
+			case GLFW_KEY_E:
+				upLayer(window);
+				break;
+			case GLFW_KEY_A:
+				rotateLeft(window);
+				break;
+			case GLFW_KEY_D:
+				rotateRight(window);
+				break;
 			default:
 			{
 			}
@@ -277,4 +328,72 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	}
 }
 
+void zoomIn(GLFWwindow* window)
+{
+	if (Camera)
+	{
+		Camera->scaleRadius(0.5f);
+	}
+}
+
+void zoomOut(GLFWwindow* window)
+{
+	if (Camera)
+	{
+		Camera->scaleRadius(2.0f);
+	}
+}
+
+void downLayer(GLFWwindow* window)
+{
+	glm::mat4 down(2.0f);
+
+	if (downLayerEnabled == false)
+	{
+		if (Camera)
+		{
+			Camera->projectionMatrix += down;
+			downLayerEnabled = true;
+		}
+	}
+}
+
+void upLayer(GLFWwindow* window)
+{
+	glm::mat4 up(-2.0f);
+	if (downLayerEnabled == true)
+	{
+		if (Camera)
+		{
+			Camera->projectionMatrix += up;
+			downLayerEnabled = false;
+		}
+	}
+}
+
+void rotateLeft(GLFWwindow* window)
+{
+	if (rotationsLeft < 3)
+	{
+		if (Camera)
+		{
+			Camera->phi -= 15.0f;
+			rotationsLeft++;
+			rotationsRight--;
+		}
+	}
+}
+
+void rotateRight(GLFWwindow* window)
+{
+	if (rotationsRight < 3)
+	{
+		if (Camera)
+		{
+			Camera->phi += 15.0f;
+			rotationsLeft--;
+			rotationsRight++;
+		}
+	}
+}
 #pragma endregion

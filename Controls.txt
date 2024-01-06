@@ -1,0 +1,11 @@
+Controls
+
+Zoom In - W
+Zoom Out - S
+
+Layer Up - Q
+Layer Down - E
+
+Rotate Left - A
+Rotate Right - D
+(Due to a bug, you need to zoom after pressing rotate button to rotate)
