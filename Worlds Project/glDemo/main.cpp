@@ -10,6 +10,23 @@
 using namespace std;
 using namespace glm;
 
+/*struct directionalLight {
+
+	vec3 direction;
+	vec3 colour;
+
+	directionalLight() {
+
+		direction = vec3(0.0f, -1.0f, 0.0f); 
+		colour = vec3(0.0f, 1.0f, 0.0f);
+	}
+
+	directionalLight(vec3 direction, vec3 colour = vec3(0.0f, 1.0f, 0.0f)) {
+
+		this->direction = direction;
+		this->colour = colour;
+	}
+};*/
 
 #pragma region Global variables
 
@@ -30,6 +47,18 @@ AIMesh* buildingPhase1Mesh = nullptr;
 const unsigned int initWidth = 512;
 const unsigned int initHeight = 512;
 
+/*
+GLuint				texDirLightShader;
+GLint				texDirLightShader_modelMatrix;
+GLint				texDirLightShader_viewMatrix;
+GLint				texDirLightShader_projMatrix;
+GLint				texDirLightShader_texture;
+GLint				texDirLightShader_lightDirection;
+GLint				texDirLightShader_lightColour;
+
+float directLightTheta = 0.0f;
+directionalLight directLight = directionalLight(vec3(cosf(directLightTheta), sinf(directLightTheta), 0.0f));
+*/
 #pragma endregion
 
 // Function prototypes
@@ -43,6 +72,7 @@ void downLayer(GLFWwindow* window);
 void upLayer(GLFWwindow* window);
 void rotateLeft(GLFWwindow* window);
 void rotateRight(GLFWwindow* window);
+//void renderWithDirectionalLight();
 
 bool downLayerEnabled = false;
 float rotationsLeft = 0.0f;
@@ -261,8 +291,60 @@ void updateScene()
 		gamesClock->tick();
 		tDelta = (float)gamesClock->gameTimeDelta();
 	}
+
+	//renderWithDirectionalLight();
 }
 
+//Lighting code that didnt work
+/*void renderWithDirectionalLight() {
+
+	// Clear the rendering window
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Get camera matrices
+	mat4 cameraProjection = Camera->projectionTransform();
+	mat4 cameraView = Camera->viewTransform();
+
+	// Plug-in texture-directional light shader and setup relevant uniform variables
+	// (keep this shader for all textured objects affected by the light source)
+	glUseProgram(texDirLightShader);
+
+	glUniformMatrix4fv(texDirLightShader_viewMatrix, 1, GL_FALSE, (GLfloat*)&cameraView);
+	glUniformMatrix4fv(texDirLightShader_projMatrix, 1, GL_FALSE, (GLfloat*)&cameraProjection);
+	glUniform1i(texDirLightShader_texture, 0); // set to point to texture unit 0 for AIMeshes
+	glUniform3fv(texDirLightShader_lightDirection, 1, (GLfloat*)&(directLight.direction));
+	glUniform3fv(texDirLightShader_lightColour, 1, (GLfloat*)&(directLight.colour));
+
+
+
+	if (npcMesh) {
+
+		mat4 modelTransform = glm::scale(identity<mat4>(), vec3(10.0f, 1.0f, 10.0f));
+
+		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
+
+		groundMesh->preRender();
+		groundMesh->render();
+		groundMesh->postRender();
+	}
+
+
+	//
+	// For demo purposes, render directional light source
+	//
+
+	// Restore fixed-function pipeline
+	glUseProgram(0);
+
+	mat4 cameraT = cameraProjection * cameraView;
+	glLoadMatrixf((GLfloat*)&cameraT);
+	glEnable(GL_POINT_SMOOTH);
+	glPointSize(10.0f);
+	glBegin(GL_POINTS);
+	glColor3f(directLight.colour.r, directLight.colour.g, directLight.colour.b);
+	glVertex3f(directLight.direction.x * 10.0f, directLight.direction.y * 10.0f, directLight.direction.z * 10.0f);
+	glEnd();
+}*/
 
 #pragma region Event handler functions
 
@@ -394,6 +476,9 @@ void rotateRight(GLFWwindow* window)
 			rotationsLeft--;
 			rotationsRight++;
 		}
+
+		//directLightTheta += glm::radians(45.0f) * tDelta;
+		//directLight.direction = vec3(cosf(directLightTheta), sinf(directLightTheta), 0.0f);
 	}
 }
 #pragma endregion
