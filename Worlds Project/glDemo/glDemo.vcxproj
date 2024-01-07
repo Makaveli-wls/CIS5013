@@ -147,6 +147,7 @@
     <ClInclude Include="GUClock.h" />
     <ClInclude Include="PrincipleAxes.h" />
     <ClInclude Include="shader_setup.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="TextureQuad.h" />
     <ClInclude Include="TileMap.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PrincipleAxes.cpp" />
     <ClCompile Include="shader_setup.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="TextureQuad.cpp" />
     <ClCompile Include="TileMap.cpp" />

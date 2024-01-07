@@ -5,7 +5,8 @@
 #include "GUClock.h"
 #include "PrincipleAxes.h"
 #include "AIMesh.h"
-
+#include "Sphere.h"
+#include "shader_setup.h"
 
 using namespace std;
 using namespace glm;
@@ -42,13 +43,17 @@ AIMesh* npcMesh = nullptr;
 AIMesh* groundFlatMesh = nullptr;
 AIMesh* buildingPhase2Mesh = nullptr;
 AIMesh* buildingPhase1Mesh = nullptr;
+Sphere* sphereMesh;
 
 //Window height and width
 const unsigned int initWidth = 512;
 const unsigned int initHeight = 512;
 
-/*
-GLuint				texDirLightShader;
+GLuint textureShader;
+GLuint textureShader_transformMat;
+
+
+/*GLuint				texDirLightShader;
 GLint				texDirLightShader_modelMatrix;
 GLint				texDirLightShader_viewMatrix;
 GLint				texDirLightShader_projMatrix;
@@ -56,9 +61,10 @@ GLint				texDirLightShader_texture;
 GLint				texDirLightShader_lightDirection;
 GLint				texDirLightShader_lightColour;
 
+
 float directLightTheta = 0.0f;
-directionalLight directLight = directionalLight(vec3(cosf(directLightTheta), sinf(directLightTheta), 0.0f));
-*/
+directionalLight directLight = directionalLight(vec3(cosf(directLightTheta), sinf(directLightTheta), 0.0f));*/
+
 #pragma endregion
 
 // Function prototypes
@@ -78,6 +84,7 @@ bool downLayerEnabled = false;
 float rotationsLeft = 0.0f;
 float rotationsRight = 0.0f;
 
+vec3 spherePos = vec3(100.0f, -10.0f, 10.0f);
 
 
 int main() 
@@ -138,7 +145,7 @@ int main()
 
 	npcMesh = new AIMesh(string("Assets\\NPC\\npc.obj"));//imports NPC model mesh
 	if (npcMesh) {
-		npcMesh->addTexture(string("Assets\\Textures\\BuildingPhase1.bmp\\"), FIF_BMP);//imports texture of npcMesh if npcMesh is imported
+		npcMesh->addTexture(string("Assets\\Textures\\blue.bmp\\"), FIF_BMP);//imports texture of npcMesh if npcMesh is imported
 	}
 
 	groundFlatMesh = new AIMesh(string("Assets\\Ground\\MarsGroundFlat.obj"));//imports MarsGroundFlat mesh
@@ -155,6 +162,11 @@ int main()
 	if (buildingPhase2Mesh) {
 		buildingPhase2Mesh->addTexture(string("Assets\\Textures\\BuildingPhase2.bmp"), FIF_BMP);//imports texture if MarsGroundFlat mesh is imported
 	}
+
+	sphereMesh = new Sphere(string("Assets\\Sphere.obj"));
+
+	textureShader = setupShaders(string("Assets\\Shaders\\basic_texture.vert"), string("Assets\\Shaders\\basic_texture.frag"));
+	textureShader_transformMat = glGetUniformLocation(textureShader, "transformMat");
 
 
 	//Main loop
@@ -183,6 +195,9 @@ void renderScene()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	mat4 cameraTransform = Camera->projectionTransform() * Camera->viewTransform();
+
+	mat4 cameraProjection = Camera->projectionTransform();
+	mat4 cameraView = Camera->viewTransform() * translate(identity<mat4>(), vec3(0.0f, 0.0f, 0.0f));
 
 #if 1
 	
@@ -273,7 +288,34 @@ void renderScene()
 		buildingPhase2Mesh->preRender();
 		buildingPhase2Mesh->render();
 		buildingPhase2Mesh->postRender();
+	}
 
+	if (buildingPhase2Mesh)
+	{
+
+		mat4 groundFlatTranslate = translate(identity<mat4>(), vec3(100.0f, 10.0f, -50.0f));
+		mat4 T = cameraTransform * groundFlatTranslate;
+		glLoadMatrixf((GLfloat*)&T);
+
+		buildingPhase2Mesh->preRender();
+		buildingPhase2Mesh->render();
+		buildingPhase2Mesh->postRender();
+	}
+
+	if (sphereMesh)
+	{
+		mat4 T = cameraProjection * cameraView * glm::translate(identity<mat4>(), spherePos);
+		glLoadMatrixf((GLfloat*)&T);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		sphereMesh->preRender();
+		sphereMesh->render(T);
+		sphereMesh->postRender();
+
+		glDisable(GL_BLEND);
+		glUseProgram(0);
 	}
 #endif*/
 
@@ -323,9 +365,9 @@ void updateScene()
 
 		glUniformMatrix4fv(texDirLightShader_modelMatrix, 1, GL_FALSE, (GLfloat*)&modelTransform);
 
-		groundMesh->preRender();
-		groundMesh->render();
-		groundMesh->postRender();
+		npcMesh->preRender();
+		npcMesh->render();
+		npcMesh->postRender();
 	}
 
 
